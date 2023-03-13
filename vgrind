@@ -1,0 +1,7 @@
+#!/bin/bash
+#--leak-check=full \
+#--show-leak-kinds=all \
+#-s \
+#
+valgrind --tool=memcheck --suppressions=valgrind.supp \
+/devel/bin/python3/bin/python3 -E $*

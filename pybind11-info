@@ -1,0 +1,11 @@
+https://app.gitter.im/#/room/#pybind_Lobby:gitter.im
+
+google:
+pybind11 memory leak
+pybind11 memory management
+
+https://stackoverflow.com/questions/20112989/how-to-use-valgrind-with-python
+valgrind --tool=memcheck --leak-check=full --suppressions=python2.7-2.7.5/Misc/valgrind-python.supp bin/python test.py
+PYTHONMALLOC=malloc python3 foobar.py
+PYTHONMALLOC=malloc valgrind --show-leak-kinds=definite --log-file=/tmp/valgrind-output \
+    python -m pytest -vv --valgrind --valgrind-log=/tmp/valgrind-output
