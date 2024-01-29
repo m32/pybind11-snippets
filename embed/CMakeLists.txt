@@ -1,5 +1,6 @@
-project(pybind_demo)
 cmake_minimum_required(VERSION 3.13)
+
+project(pybind_demo)
 set(CMAKE_CXX_STANDARD 14)
 
 include(FetchContent)
