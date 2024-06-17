@@ -1,7 +1,8 @@
 #!/usr/bin/env vpython3
 if 0:
     import clang.cindex  # provided through the libclang
-    clang.cindex.Config.set_library_file('/usr/lib/x86_64-linux-gnu/libclang-9.so.1')
+    clang.cindex.Config.set_library_file('/usr/lib/x86_64-linux-gnu/libclang-14.so.1')
+    #clang.cindex.Config.set_library_file('/usr/lib/x86_64-linux-gnu/libclang-cpp.so.14')
 from codegen.codegenerator import translate, translate_files
 
 py_namespace = translate('''

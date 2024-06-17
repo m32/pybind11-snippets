@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(pybind_demo)
+project(trampoline)
 set(CMAKE_CXX_STANDARD 14)
 
 include(FetchContent)
@@ -13,8 +13,12 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(pybind11)
 
-add_executable(demo demo.cpp)
-target_link_libraries(demo PRIVATE pybind11::embed)
-
-add_executable(wrapper wrapper.cpp)
-target_link_libraries(wrapper PRIVATE pybind11::embed)
+pybind11_add_module(trampoline
+    trampoline.cpp)
+target_include_directories(trampoline PRIVATE
+    ${PYTHON_INCLUDE_DIRS}
+    ${PYBIND11_INCLUDE_DIR}
+)
+target_link_libraries(trampoline PRIVATE
+    ${PYTHON_LIBRARIES}
+)
