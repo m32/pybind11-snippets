@@ -38,34 +38,34 @@ mod.def("olfunc" (int (*)(double &)) &olfunc, "arg1"_a);
 ************************************************************************ Simple Class
 
 class Foo: public Base { …
-explicit Foo(int arg1, int arg2);
-explicit Foo(double splot=3.15);
-int munge(int data);
-static void strew(bool evenly);
+    explicit Foo(int arg1, int arg2);
+    explicit Foo(double splot=3.15);
+    int munge(int data);
+    static void strew(bool evenly);
 
 pybind11:
-py::class_<Foo, shared_ptr<Foo>, Base> cls(mod, "Foo");
-// constructors
-cls.def(py::init<int, int>(), "arg1"_a, "arg2"_a);
-cls.def(py::init<double>(), "splot"_a=3.15);
-// methods
-cls.def("munge", &Foo::munge, "data"_a);
-cls.def_static(“strew”, &Foo::strew, "evenly"_a);
+    py::class_<Foo, shared_ptr<Foo>, Base> cls(mod, "Foo");
+        // constructors
+        cls.def(py::init<int, int>(), "arg1"_a, "arg2"_a);
+        cls.def(py::init<double>(), "splot"_a=3.15);
+        // methods
+        cls.def("munge", &Foo::munge, "data"_a);
+        cls.def_static(“strew”, &Foo::strew, "evenly"_a);
 
 ************************************************************************ C++ Operators
 
 Like methods, but use py::is_operator() to get
 Python-like type checking:
-cls.def("__eq__", &Foo::operator==, py::is_operator());
-cls.def("__ne__", &Foo::operator!=, py::is_operator());
+        cls.def("__eq__", &Foo::operator==, py::is_operator());
+        cls.def("__ne__", &Foo::operator!=, py::is_operator());
 
 ************************************************************************ C++11 Lambdas
 Use C++11 lambdas to add behavior:
-cls.def("__repr__", [](Foo const & self) {
-std::ostringstream os;
-os << self;
-return os.str();
-});
+        cls.def("__repr__", [](Foo const & self) {
+            std::ostringstream os;
+            os << self;
+            return os.str();
+        });
 
 You can also add methods to wrapped classes in Python
 
@@ -83,15 +83,15 @@ Put helper functions in an anonymous namespace
 C++11:
 template <typename T>
 class Foo: { …
-explicit Foo(bool flag);
-int munge(T data);
+    explicit Foo(bool flag);
+    int munge(T data);
 
 pybind11: write a helper function
 template <typename T>
 void declareFoo(py::module & mod, string const & suffix) {
-py::class_<Foo<T>> cls(mod, ("Foo" + suffix).c_str());
-cls.def(py::init<bool>(), "flag"_a);
-cls.def("munge", &Foo<T>::munge, "data"_a);
+    py::class_<Foo<T>> cls(mod, ("Foo" + suffix).c_str());
+    cls.def(py::init<bool>(), "flag"_a);
+    cls.def("munge", &Foo<T>::munge, "data"_a);
 }
 
 ************************************************************************ Templated Class 2/2
@@ -107,8 +107,8 @@ void declareFoo(py::module & mod, string const & suffix) {
 // namespace lsst::your::code::<anonymous>
 
 PYBIND11_PLUGIN(_example) {
-py::module mod("_example", "Example wrapper");
-declareFoo<double>(mod, "D");
+    py::module mod("_example", "Example wrapper");
+    declareFoo<double>(mod, "D");
 
 ************************************************************************ Enums
 
@@ -116,23 +116,23 @@ class La { …
 enum Mode {FAST, SLOW};
 
 pybind11:
-py::class_<La> cls(mod, "La");
-py::enum_<La::Mode>(cls, "Mode")
-.value("FAST", La::Mode::FAST)
-.value("SLOW", La::Mode::SLOW)
-.export_values();
+    py::class_<La> cls(mod, "La");
+    py::enum_<La::Mode>(cls, "Mode")
+        .value("FAST", La::Mode::FAST)
+        .value("SLOW", La::Mode::SLOW)
+        .export_values();
 Notes:
 • pybind11 enums are not ints
 • py::arithmetic() is a useful option for bit field enums
 
 ************************************************************************ Fields and Properties
 Fields:
-def_readwrite("name", &Foo::name);
-def_readonly("constname", &Foo::constname);
+    def_readwrite("name", &Foo::name);
+    def_readonly("constname", &Foo::constname);
 
 Accessors as Properties:
-cls.def_property("data", &Foo::getData, &Foo::setData);
-cls.def_property_readonly(“flag”, &Foo::getFlag);
+    cls.def_property("data", &Foo::getData, &Foo::setData);
+    cls.def_property_readonly(“flag”, &Foo::getFlag);
 
 Static Fields and Properties:
 Append _static, e.g.: cls.def_readwrite_static
@@ -140,27 +140,25 @@ Append _static, e.g.: cls.def_readwrite_static
 ************************************************************************ Overloaded Methods
 C++:
 class Foo { …
-void hey(double arg) const;
-void hey(int arg1, bool flag);
-static void gack(bool ok);
-static void gack(int x, int y);
+    void hey(double arg) const;
+    void hey(int arg1, bool flag);
+    static void gack(bool ok);
+    static void gack(int x, int y);
 
 pybind11:
-// Use (Class::*) for a normal method
-cls.def("hey", (void (Foo::*)(double) const) &Foo::hey);
-cls.def("hey", (void (Foo::*)(int, bool)) &Foo::hey);
-// Use (*) for a static method
-cls.def_static(“gack", (void (*)(bool)) &Foo::gack);
-cls.def_static(“gack", (void (*)(int, int)) &Foo::gack);
+    // Use (Class::*) for a normal method
+    cls.def("hey", (void (Foo::*)(double) const) &Foo::hey);
+    cls.def("hey", (void (Foo::*)(int, bool)) &Foo::hey);
+    // Use (*) for a static method
+    cls.def_static(“gack", (void (*)(bool)) &Foo::gack);
+    cls.def_static(“gack", (void (*)(int, int)) &Foo::gack);
 
 ************************************************************************ Return Value Policies
 When C++ returns a reference or pointer:
 class Foo {…
-double & getValue(int index);
-Bar * getBar(std::string const & name);
+    double & getValue(int index);
+    Bar * getBar(std::string const & name);
 
 you must specify: copy, live reference or…?
-mod.def("getValue", &Foo::getValue, "index"_a,
-py::return_value_policy::copy);
-mod.def("getBar", &Foo::getBar, “name”_a,
-py::return_value_policy::reference_internal);
+    mod.def("getValue", &Foo::getValue, "index"_a, py::return_value_policy::copy);
+    mod.def("getBar", &Foo::getBar, “name”_a, py::return_value_policy::reference_internal);
