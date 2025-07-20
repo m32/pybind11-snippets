@@ -21,6 +21,17 @@ PYBIND11_MODULE(fredbuf, m) {
     ;
     py::class_<PieceTree::Tree>(m, "Tree")
         .def(py::init<>())
+        .def("data", [](
+            PieceTree::Tree &self
+        ){
+            PieceTree::TreeWalker walker{ &self };
+            std::string buf;
+            while (not walker.exhausted())
+            {
+                buf.push_back(walker.next());
+            }
+            return buf;
+        })
         .def("insert", [](
             PieceTree::Tree &self,
             size_t offset,
