@@ -162,3 +162,21 @@ class Foo {…
 you must specify: copy, live reference or…?
     mod.def("getValue", &Foo::getValue, "index"_a, py::return_value_policy::copy);
     mod.def("getBar", &Foo::getBar, “name”_a, py::return_value_policy::reference_internal);
+
+    template<typename T>
+
+************************************************************************ typed declaration
+pybind11:
+void declare_array(py::module &m, const std::string &typestr) {
+    using Class = Array2D<T>;
+    std::string pyclass_name = std::string("Array2D") + typestr;
+    py::class_<Class>(m, pyclass_name.c_str(), py::buffer_protocol(), py::dynamic_attr())
+    .def(py::init<>())
+    .def(py::init<Class::xy_t, Class::xy_t, T>())
+    .def("size",      &Class::size)
+    .def("width",     &Class::width)
+    .def("height",    &Class::height);
+}
+
+declare_array<float>(m, "float");
+declare_array<int>(m, "int");
