@@ -22,15 +22,23 @@ PYBIND11_MODULE(fredbuf, m) {
     py::class_<PieceTree::Tree>(m, "Tree")
         .def(py::init<>())
         .def("data", [](
-            PieceTree::Tree &self
+            PieceTree::Tree &self,
+            py::function &func
         ){
             PieceTree::TreeWalker walker{ &self };
             std::string buf;
             while (not walker.exhausted())
             {
                 buf.push_back(walker.next());
+                if( buf.length() == 4096 ){
+                    func(py::bytearray(buf));
+                    buf.clear();
+                }
             }
-            return buf;
+            if( buf.length() != 0 ){
+                func(py::bytearray(buf));
+                buf.clear();
+            }
         })
         .def("insert", [](
             PieceTree::Tree &self,
@@ -62,6 +70,14 @@ PYBIND11_MODULE(fredbuf, m) {
         */
         // Queries.
         .def("get_line_content", [](
+            PieceTree::Tree &self,
+            size_t line
+        ){
+            std::string result;
+            self.get_line_content(&result, PieceTree::Line{line});
+            return py::bytearray(result);
+        })
+        .def("get_line_content_string", [](
             PieceTree::Tree &self,
             size_t line
         ){
