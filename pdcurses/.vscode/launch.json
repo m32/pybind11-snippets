@@ -1,0 +1,57 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "t-01",
+            "type": "debugpy",
+            "request": "launch",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "program": "train.py"
+        },
+        {
+            "name": "python rain",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/devel/bin/python3/bin/python3",
+            "stopAtEntry": true,
+            "args": [
+                "-m", "debugpy", "--listen", "5678",
+            	"train.py"
+            ],
+            "cwd": "${workspaceFolder}",
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "Python: Current File",
+            "type": "debugpy",
+            "request": "launch",
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "program": "${file}"
+        },
+        {
+            "name": "Python: Attach Current File",
+            "type": "debugpy",
+            "request": "attach",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "${workspaceFolder}"
+                }
+            ],
+            "connect": {
+                "port": 5678,
+                "host": "localhost"
+            },
+        },
+    ]
+}

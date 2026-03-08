@@ -1,0 +1,91 @@
+diff --git a/cmake/project_common.cmake b/cmake/project_common.cmake
+index 15939a5..8badeeb 100644
+--- a/cmake/project_common.cmake
++++ b/cmake/project_common.cmake
+@@ -103,7 +103,7 @@ if(PDC_BUILD_SHARED)
+         ARCHIVE DESTINATION ${PDCURSES_DIST}/lib/${PROJECT_NAME}
+         LIBRARY DESTINATION ${PDCURSES_DIST}/lib/${PROJECT_NAME}
+         RUNTIME DESTINATION ${PDCURSES_DIST}/bin/${PROJECT_NAME} COMPONENT applications)
+-    set_target_properties(${PDCURSE_PROJ} PROPERTIES OUTPUT_NAME "pdcurses")
++    set_target_properties(${PDCURSE_PROJ} PROPERTIES OUTPUT_NAME "pdcurses${PROJECT_NAME}")
+ else()
+     set(PDCURSE_PROJ ${PROJECT_NAME}_pdcursesstatic)
+     add_library (${PDCURSE_PROJ} STATIC ${pdc_src_files} ${pdcurses_src_files})
+diff --git a/curspriv.h b/curspriv.h
+index 6dc3dc4..f8bb6c3 100644
+--- a/curspriv.h
++++ b/curspriv.h
+@@ -173,6 +173,15 @@ int PDC_expand_combined_characters( const cchar_t c, cchar_t *added);
+ 
+ #define _is_altcharset( ch)  (((ch) & (A_ALTCHARSET | (A_CHARTEXT ^ 0x7f))) == A_ALTCHARSET)
+ 
++/* Color pair structure */
++
++typedef struct _pdc_pair
++{
++    int f;                /* foreground color */
++    int b;                /* background color */
++    int prev, next;       /* doubly-linked list indices */
++} PDC_PAIR;
++
+ struct _win               /* definition of a window */
+ {
+     int   _cury;          /* current pseudo-cursor */
+diff --git a/panel.h b/panel.h
+index 5bbc34f..44830e1 100644
+--- a/panel.h
++++ b/panel.h
+@@ -14,6 +14,14 @@ extern "C"
+ {
+ #endif
+ 
++struct panel
++{
++    WINDOW *win;
++    struct panel *below;
++    struct panel *above;
++    const void *user;
++};
++
+ typedef struct panel PANEL;
+ 
+ PDCEX int     bottom_panel(PANEL *pan);
+diff --git a/pdcurses/color.c b/pdcurses/color.c
+index 9624818..e203a99 100644
+--- a/pdcurses/color.c
++++ b/pdcurses/color.c
+@@ -139,15 +139,6 @@ color
+ #include <limits.h>
+ #include <assert.h>
+ 
+-/* Color pair structure */
+-
+-typedef struct _pdc_pair
+-{
+-    int f;                /* foreground color */
+-    int b;                /* background color */
+-    int prev, next;       /* doubly-linked list indices */
+-} PDC_PAIR;
+-
+ int COLORS = 0;
+ int COLOR_PAIRS = 1;       /* until start_color() is called */
+ 
+diff --git a/pdcurses/panel.c b/pdcurses/panel.c
+index 59a45de..7117694 100644
+--- a/pdcurses/panel.c
++++ b/pdcurses/panel.c
+@@ -137,14 +137,6 @@ panel
+ #include "curspriv.h"
+ #include <panel.h>
+ 
+-struct panel
+-{
+-    WINDOW *win;
+-    struct panel *below;
+-    struct panel *above;
+-    const void *user;
+-};
+-
+ static PANEL _stdscr_pseudo_panel;
+ 
+ /* The 'deck' of panels is maintained as a circularly linked list,
