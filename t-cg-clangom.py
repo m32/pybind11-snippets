@@ -1,7 +1,7 @@
 #!/usr/bin/env vpython3
 from mako.template import Template
 import clang.cindex  # provided through the libclang
-clang.cindex.Config.set_library_file('/usr/lib/x86_64-linux-gnu/libclang-9.so.1')
+clang.cindex.Config.set_library_file('/usr/lib/x86_64-linux-gnu/libclang-19.so.1')
 
 import asciitree # must be version 0.2
 

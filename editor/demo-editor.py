@@ -3,7 +3,7 @@ builder = fredbuf.TreeBuilder()
 
 import io
 fp = io.BytesIO('''\
-ąćęłńóśżź
+ąćęłńóśżź\t\r\n\
 CopyData 1 żółty1 żółty 2
 2 CopyData ażółty
 żółty abc CopyData1 CopyData
@@ -30,3 +30,14 @@ for lno in range(1, tree.line_count()+1):
 
 with open('output', 'wb') as fp:
     tree.data(fp.write)
+
+for offset in range(20):
+    ch = tree.at(10+offset)
+    ich = ord(ch)
+    if ch == '\n':
+        ch = '<cr>'
+    elif ch == '\r':
+        ch = '<lf>'
+    elif ch == '\t':
+        ch = '<tab>'
+    print(f'at={offset} ch={ch}/{ich}')
